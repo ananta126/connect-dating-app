@@ -39,7 +39,7 @@ async function initializeDatabase() {
 }
 
 // Initialize database when app starts
-initializeDatabase().catch(err => logger.error("Failed to initialize database", err));
+// initializeDatabase().catch(err => logger.error("Failed to initialize database", err));
 
 const app = express();
 app.set("view engine", "ejs");

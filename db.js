@@ -3,14 +3,21 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 // Railway provides DATABASE_URL automatically, use it if available
-const pool = new Pool({
+const poolConfig = {
   connectionString: process.env.DATABASE_URL || 
     `postgresql://${process.env.DB_USER || 'postgres'}:${process.env.DB_PASSWORD}@${process.env.DB_HOST || 'localhost'}:${parseInt(process.env.DB_PORT || '5433', 10)}/${process.env.DB_NAME || 'dating_poc'}`,
   // Connection pool settings
   max: 20,                              // Max connections in pool
   idleTimeoutMillis: 30000,             // Close idle connections after 30s
   connectionTimeoutMillis: 5000,        // Timeout for acquiring connection
-});
+};
+
+// Add SSL for production (Railway)
+if (process.env.NODE_ENV === 'production') {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+
+const pool = new Pool(poolConfig);
 
 // Logging for pool events
 pool.on('connect', () => {
