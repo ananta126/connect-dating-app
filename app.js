@@ -20,15 +20,21 @@ const logger = {
 async function initializeDatabase() {
   try {
     const schemaSQL = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
-    await pool.query(schemaSQL);
+    // Split by semicolon and execute each statement separately
+    const statements = schemaSQL.split(';').filter(stmt => stmt.trim().length > 0);
+    for (const statement of statements) {
+      try {
+        await pool.query(statement);
+      } catch (err) {
+        // Ignore "already exists" errors
+        if (!err.message.includes("already exists")) {
+          throw err;
+        }
+      }
+    }
     logger.info("Database schema initialized successfully");
   } catch (error) {
-    // Schema might already exist, which is fine
-    if (error.message.includes("already exists")) {
-      logger.info("Database schema already exists");
-    } else {
-      logger.warn("Database initialization note", error.message);
-    }
+    logger.warn("Database initialization note", error.message);
   }
 }
 
