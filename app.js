@@ -628,6 +628,30 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+// ===== DEBUG: Show environment variables =====
+app.get("/api/debug-env", (req, res) => {
+  const dbVars = {};
+  const envVars = ['DATABASE_URL', 'PGHOST', 'PGPORT', 'PGDATABASE', 'PGUSER', 'PGPASSWORD', 'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'NODE_ENV'];
+  
+  envVars.forEach(key => {
+    const val = process.env[key];
+    if (val) {
+      // Don't expose full passwords
+      if (key.includes('PASSWORD')) {
+        dbVars[key] = val.length > 0 ? '***' : 'not set';
+      } else if (key === 'DATABASE_URL') {
+        dbVars[key] = val.substring(0, 50) + '...';
+      } else {
+        dbVars[key] = val;
+      }
+    } else {
+      dbVars[key] = 'not set';
+    }
+  });
+  
+  res.json({ env: dbVars });
+});
+
 // ===== DATABASE INITIALIZATION ENDPOINT =====
 app.get("/api/init-db", async (req, res) => {
   try {
