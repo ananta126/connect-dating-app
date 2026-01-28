@@ -623,6 +623,11 @@ process.on('unhandledRejection', (err) => {
   logger.error("Unhandled Rejection", err);
 });
 
+// ===== HEALTH CHECK =====
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 // ===== DATABASE INITIALIZATION ENDPOINT =====
 app.get("/api/init-db", async (req, res) => {
   try {
