@@ -2,11 +2,28 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Railway provides DATABASE_URL automatically
+// Railway auto-injects these when PostgreSQL is linked
 let poolConfig;
 
-if (process.env.DATABASE_URL) {
-  // Use Railway's connection string
+if (process.env.PGHOST) {
+  // Using Railway's auto-injected PostgreSQL environment variables
+  poolConfig = {
+    host: process.env.PGHOST,
+    port: parseInt(process.env.PGPORT || '5432', 10),
+    database: process.env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  };
+  
+  // Add SSL for production
+  if (process.env.NODE_ENV === 'production') {
+    poolConfig.ssl = { rejectUnauthorized: false };
+  }
+} else if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('<')) {
+  // Use DATABASE_URL if it's set and not a placeholder
   poolConfig = {
     connectionString: process.env.DATABASE_URL,
     max: 20,
@@ -14,7 +31,6 @@ if (process.env.DATABASE_URL) {
     connectionTimeoutMillis: 5000,
   };
   
-  // Add SSL for production
   if (process.env.NODE_ENV === 'production') {
     poolConfig.ssl = { rejectUnauthorized: false };
   }
