@@ -16,6 +16,25 @@ const logger = {
   warn: (msg, data) => console.warn(`[WARN] ${new Date().toISOString()} - ${msg}`, data || "")
 };
 
+// Initialize database schema on startup
+async function initializeDatabase() {
+  try {
+    const schemaSQL = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
+    await pool.query(schemaSQL);
+    logger.info("Database schema initialized successfully");
+  } catch (error) {
+    // Schema might already exist, which is fine
+    if (error.message.includes("already exists")) {
+      logger.info("Database schema already exists");
+    } else {
+      logger.warn("Database initialization note", error.message);
+    }
+  }
+}
+
+// Initialize database when app starts
+initializeDatabase().catch(err => logger.error("Failed to initialize database", err));
+
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
