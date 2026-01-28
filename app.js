@@ -75,8 +75,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json({ limit: "10mb" }));
 app.use("/uploads", express.static(uploadsDir)); // Serve uploaded photos
 
-// Apply general rate limiter to all routes
-app.use(generalLimiter);
+// Skip general rate limiter for now - causing issues in production
+// app.use(generalLimiter);
 
 // Session configuration
 app.use(
