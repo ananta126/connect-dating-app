@@ -623,6 +623,31 @@ process.on('unhandledRejection', (err) => {
   logger.error("Unhandled Rejection", err);
 });
 
+// ===== DATABASE INITIALIZATION ENDPOINT =====
+app.get("/api/init-db", async (req, res) => {
+  try {
+    const schemaSQL = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
+    const statements = schemaSQL.split(';').filter(stmt => stmt.trim().length > 0);
+    let created = 0;
+    for (const statement of statements) {
+      try {
+        await pool.query(statement);
+        created++;
+      } catch (err) {
+        if (err.message.includes("already exists")) {
+          // Ignore
+        } else {
+          throw err;
+        }
+      }
+    }
+    res.json({ success: true, message: `Database initialized. ${created} statements executed.` });
+  } catch (error) {
+    logger.error("Database init error", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ===== AUTHENTICATION ROUTES =====
 
 app.get("/", isAuthenticated, isOnboardingComplete, async (req, res) => {
