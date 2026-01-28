@@ -631,14 +631,17 @@ app.get("/health", (req, res) => {
 // ===== DATABASE INITIALIZATION ENDPOINT =====
 app.get("/api/init-db", async (req, res) => {
   try {
+    console.log('[INIT] Starting database initialization...');
     const schemaSQL = fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8");
     const statements = schemaSQL.split(';').filter(stmt => stmt.trim().length > 0);
+    console.log(`[INIT] Found ${statements.length} SQL statements`);
     let created = 0;
     for (const statement of statements) {
       try {
         await pool.query(statement);
         created++;
       } catch (err) {
+        console.log(`[INIT] Error executing statement: ${err.message}`);
         if (err.message.includes("already exists")) {
           // Ignore
         } else {
@@ -646,10 +649,12 @@ app.get("/api/init-db", async (req, res) => {
         }
       }
     }
+    console.log(`[INIT] Database initialization complete. ${created} statements executed.`);
     res.json({ success: true, message: `Database initialized. ${created} statements executed.` });
   } catch (error) {
+    console.error('[INIT] Detailed error:', error);
     logger.error("Database init error", error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error.message, stack: error.stack });
   }
 });
 
