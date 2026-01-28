@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Account - Connect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 450px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: white;
+    }
+    
+    .logo {
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    
+    .tagline {
+      font-size: 14px;
+      opacity: 0.9;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    h1 { 
+      font-weight: 500;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: white;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .card { 
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .btn { 
+      padding: 14px 28px;
+      margin: 12px 0;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    input { 
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 0.3px;
+    }
+    
+    .error { 
+      color: #d32f2f;
+      margin: 14px 0;
+      padding: 14px;
+      background: #ffebee;
+      border-left: 4px solid #d32f2f;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 8px;
+    }
+    
+    .password-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 6px;
+      font-style: italic;
+    }
+    
+    .switch-link { 
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 2px solid #f0f0f0;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .switch-link a {
+      color: #667eea;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .switch-link a:hover {
+      color: #764ba2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">✦</div>
+      <div class="tagline">Connect Authentically</div>
+    </div>
+    
+    <h1>Create Account</h1>
+    <p class="subtitle">Join our community of intentional connections</p>
+    
+    <div class="card">
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+      
+      <form method="post" action="/register">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email" 
+            placeholder="your@email.com" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password"
+            name="password" 
+            placeholder="At least 8 characters"
+            required 
+          />
+          <p class="password-hint">Minimum 8 characters, case-sensitive</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="password_confirm">Confirm Password</label>
+          <input 
+            type="password" 
+            id="password_confirm"
+            name="password_confirm" 
+            placeholder="Confirm your password"
+            required 
+          />
+        </div>
+        
+        <button class="btn" type="submit">Create Account</button>
+      </form>
+      
+      <div class="switch-link">
+        Already have an account? <a href="/login">Sign in</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

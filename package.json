@@ -1,0 +1,42 @@
+{
+  "name": "connect-dating-app",
+  "version": "1.0.0",
+  "description": "An intentional dating app that prioritizes honesty, emotional safety, and personality over appearance",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dating-app",
+    "open-source",
+    "nodejs",
+    "postgresql",
+    "intentional-dating",
+    "ethical-design",
+    "social-connection"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME#readme",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^2.2.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.5.1",
+    "express-session": "^1.18.0",
+    "helmet": "^7.2.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.3"
+  }
+}
