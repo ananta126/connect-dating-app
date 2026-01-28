@@ -756,7 +756,55 @@ app.get("/register", (req, res) => {
   if (req.session.userId) {
     return res.redirect("/");
   }
-  res.render("register", { error: null });
+  res.send(page(`
+    <h1>Create Account</h1>
+    <div class="card">
+      <form method="post" action="/register">
+        <div style="margin-bottom: 20px;">
+          <label for="email" style="display: block; font-weight: 600; margin-bottom: 8px;">Email Address</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email" 
+            placeholder="your@email.com" 
+            required
+            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          />
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label for="password" style="display: block; font-weight: 600; margin-bottom: 8px;">Password</label>
+          <input 
+            type="password" 
+            id="password"
+            name="password" 
+            placeholder="At least 8 characters"
+            required
+            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          />
+          <p style="font-size: 12px; color: #666; margin-top: 6px;">Minimum 8 characters, case-sensitive</p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label for="password_confirm" style="display: block; font-weight: 600; margin-bottom: 8px;">Confirm Password</label>
+          <input 
+            type="password" 
+            id="password_confirm"
+            name="password_confirm" 
+            placeholder="Confirm your password"
+            required
+            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          />
+        </div>
+        
+        <button class="btn btn-primary" type="submit" style="margin-top: 20px;">Create Account</button>
+      </form>
+      
+      <div style="text-align: center; margin-top: 28px; padding-top: 28px; border-top: 2px solid #f0f0f0; color: #666; font-size: 14px;">
+        Already have an account? <a href="/login" style="color: #667eea; text-decoration: none; font-weight: 600;">Sign in</a>
+      </div>
+    </div>
+  `));
 });
 
 app.post("/register", async (req, res) => {
@@ -764,27 +812,43 @@ app.post("/register", async (req, res) => {
     const { email, password, password_confirm } = req.body;
 
     if (!email || !password || !password_confirm) {
-      return res.status(400).render("register", {
-        error: "Email and password are required",
-      });
+      return res.status(400).send(page(`
+        <div class="card">
+          <h2 style="color: #d9534f;">Error</h2>
+          <p>Email and password are required</p>
+          <a href="/register" class="btn btn-primary">Back</a>
+        </div>
+      `));
     }
 
     if (!validateEmail(email)) {
-      return res.status(400).render("register", {
-        error: "Invalid email format",
-      });
+      return res.status(400).send(page(`
+        <div class="card">
+          <h2 style="color: #d9534f;">Error</h2>
+          <p>Invalid email format</p>
+          <a href="/register" class="btn btn-primary">Back</a>
+        </div>
+      `));
     }
 
     if (!validatePassword(password)) {
-      return res.status(400).render("register", {
-        error: "Password must be at least 8 characters long",
-      });
+      return res.status(400).send(page(`
+        <div class="card">
+          <h2 style="color: #d9534f;">Error</h2>
+          <p>Password must be at least 8 characters long</p>
+          <a href="/register" class="btn btn-primary">Back</a>
+        </div>
+      `));
     }
 
     if (password !== password_confirm) {
-      return res.status(400).render("register", {
-        error: "Passwords do not match",
-      });
+      return res.status(400).send(page(`
+        <div class="card">
+          <h2 style="color: #d9534f;">Error</h2>
+          <p>Passwords do not match</p>
+          <a href="/register" class="btn btn-primary">Back</a>
+        </div>
+      `));
     }
 
     const existingUser = await pool.query(
@@ -794,9 +858,13 @@ app.post("/register", async (req, res) => {
 
     if (existingUser.rows.length > 0) {
       logger.warn(`Registration attempt with existing email: ${email}`);
-      return res.status(409).render("register", {
-        error: "Email already registered",
-      });
+      return res.status(409).send(page(`
+        <div class="card">
+          <h2 style="color: #d9534f;">Error</h2>
+          <p>Email already registered</p>
+          <a href="/login" class="btn btn-primary">Go to login</a>
+        </div>
+      `));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -824,7 +892,13 @@ app.post("/register", async (req, res) => {
     res.redirect("/onboarding/step-1");
   } catch (error) {
     logger.error("Registration error", error);
-    res.status(500).render("register", { error: "An error occurred. Please try again." });
+    res.status(500).send(page(`
+      <div class="card">
+        <h2 style="color: #d9534f;">Error</h2>
+        <p>An error occurred during registration. Please try again.</p>
+        <a href="/register" class="btn btn-primary">Back</a>
+      </div>
+    `));
   }
 });
 
