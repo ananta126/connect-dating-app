@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost', 
-  port: process.env.DB_PORT || 5433,
+  port: parseInt(process.env.DB_PORT || '5433', 10), // Ensure port is parsed as integer
   database: process.env.DB_NAME || 'dating_poc',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD,

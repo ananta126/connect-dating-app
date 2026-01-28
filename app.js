@@ -38,6 +38,7 @@ initializeDatabase().catch(err => logger.error("Failed to initialize database", 
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
+app.set("trust proxy", 1); // Trust first proxy (Railway load balancer)
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, "uploads");
@@ -52,13 +53,16 @@ app.use(helmet()); // Set security headers
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // 5 requests per windowMs
-  message: "Too many login attempts, please try again later"
+  message: "Too many login attempts, please try again later",
+  skip: (req) => process.env.NODE_ENV !== 'production', // Skip in development
+  keyGenerator: (req) => req.ip || req.connection.remoteAddress // Get real IP from proxy
 });
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100, // 100 requests per windowMs
-  message: "Too many requests, please try again later"
+  message: "Too many requests, please try again later",
+  skip: (req) => process.env.NODE_ENV !== 'production' // Skip in development
 });
 
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
