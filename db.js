@@ -2,12 +2,10 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+// Railway provides DATABASE_URL automatically, use it if available
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost', 
-  port: parseInt(process.env.DB_PORT || '5433', 10), // Ensure port is parsed as integer
-  database: process.env.DB_NAME || 'dating_poc',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
+  connectionString: process.env.DATABASE_URL || 
+    `postgresql://${process.env.DB_USER || 'postgres'}:${process.env.DB_PASSWORD}@${process.env.DB_HOST || 'localhost'}:${parseInt(process.env.DB_PORT || '5433', 10)}/${process.env.DB_NAME || 'dating_poc'}`,
   // Connection pool settings
   max: 20,                              // Max connections in pool
   idleTimeoutMillis: 30000,             // Close idle connections after 30s
